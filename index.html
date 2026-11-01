@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#090b18">
+  <meta name="description" content="VER TOUR esports tournament user panel">
+  <title>VER TOUR — Esports</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app-loader" class="app-loader" aria-live="polite">
+    <div class="loader-mark">VT</div><div class="loader-line"></div><p>INITIALIZING VER TOUR</p>
+  </div>
+
+  <main id="auth-screen" class="auth-screen hidden">
+    <div class="auth-art"><div class="art-orbit orbit-a"></div><div class="art-orbit orbit-b"></div><div class="art-cross">✦</div><div class="auth-brand"><span class="brand-mark">VT</span><span>VER <b>TOUR</b></span></div><div class="auth-art-copy"><small>COMPETE • CONNECT • CLIMB</small><h1>YOUR NEXT<br><em>VICTORY</em><br>STARTS HERE.</h1><p>Enter the arena. Build your legacy.</p></div><div class="art-foot">OFFICIAL PLAYER PORTAL <span>v1.0</span></div></div>
+    <section class="auth-card-wrap">
+      <div class="auth-card">
+        <div class="mobile-brand"><span class="brand-mark">VT</span><b>VER TOUR</b></div>
+        <div class="auth-heading"><span class="eyebrow">PLAYER ACCESS</span><h2 id="auth-title">Welcome back</h2><p id="auth-subtitle">Sign in to continue to your player account.</p></div>
+        <form id="login-form" class="auth-form">
+          <label>Email address<input id="login-email" type="email" autocomplete="email" placeholder="player@example.com" required></label>
+          <label>Password<span class="password-field"><input id="login-password" type="password" autocomplete="current-password" placeholder="Enter your password" required><button type="button" class="reveal-btn" data-toggle-password="login-password" aria-label="Show password">SHOW</button></span></label>
+          <button class="btn btn-primary btn-full" type="submit">SIGN IN <span>↗</span></button>
+          <p class="auth-switch">New player? <button type="button" class="text-button" data-auth-mode="signup">Create account</button></p>
+        </form>
+        <form id="signup-form" class="auth-form hidden">
+          <div class="form-grid">
+            <label>Free Fire UID<input id="signup-ffuid" inputmode="numeric" maxlength="24" placeholder="Your game UID" required></label>
+            <label>Nickname<input id="signup-nickname" maxlength="24" placeholder="In-game nickname" required></label>
+          </div>
+          <label>Full name<input id="signup-fullname" maxlength="60" autocomplete="name" placeholder="Your full name" required></label>
+          <label>Email address<input id="signup-email" type="email" autocomplete="email" placeholder="player@example.com" required></label>
+          <label>Password<span class="password-field"><input id="signup-password" type="password" minlength="8" autocomplete="new-password" placeholder="At least 8 characters" required><button type="button" class="reveal-btn" data-toggle-password="signup-password">SHOW</button></span></label>
+          <label>Confirm password<span class="password-field"><input id="signup-confirm" type="password" minlength="8" autocomplete="new-password" placeholder="Repeat password" required><button type="button" class="reveal-btn" data-toggle-password="signup-confirm">SHOW</button></span></label>
+          <p class="form-note">Your password is handled by Firebase Authentication and is never stored in your player profile.</p>
+          <button class="btn btn-primary btn-full" type="submit">CREATE PLAYER ACCOUNT <span>↗</span></button>
+          <p class="auth-switch">Already registered? <button type="button" class="text-button" data-auth-mode="login">Sign in</button></p>
+        </form>
+        <p class="auth-legal">By continuing, you agree to follow tournament rules and community guidelines. Real-money features require eligibility checks and verified parent/guardian authorization where applicable.</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="app-shell" class="app-shell hidden">
+    <aside class="desktop-rail">
+      <a class="rail-brand" href="#home"><span class="brand-mark">VT</span><span>VER <b>TOUR</b></span></a>
+      <div class="rail-label">PLAYER MENU</div>
+      <nav class="rail-nav">
+        <button class="nav-item active" data-page-target="home"><i>⌂</i><span>Home</span></button>
+        <button class="nav-item" data-page-target="tournaments"><i>▣</i><span>Tournaments</span></button>
+        <button class="nav-item" data-page-target="chat"><i>◎</i><span>Global Chat</span></button>
+        <button class="nav-item" data-page-target="notifications"><i>♧</i><span>Notifications</span><b id="rail-notice-count" class="nav-count hidden">0</b></button>
+        <button class="nav-item" data-page-target="profile"><i>◉</i><span>My Profile</span></button>
+      </nav>
+      <div class="rail-spacer"></div>
+      <div class="rail-player"><div class="avatar avatar-sm" data-avatar>VT</div><div class="rail-player-info"><b data-user-nickname>Player</b><span>PLAYER ACCOUNT</span></div><button class="icon-button" id="rail-logout" title="Log out">⇥</button></div>
+      <div class="rail-version">VER TOUR USER PORTAL <span>BUILD 01</span></div>
+    </aside>
+
+    <div class="app-main">
+      <header class="topbar">
+        <div class="topbar-title"><div class="mobile-brand"><span class="brand-mark">VT</span><b>VER TOUR</b></div><div class="breadcrumb"><span>PLAYER PORTAL</span><b>/</b><strong id="page-heading">HOME</strong></div></div>
+        <div class="topbar-actions"><button class="icon-button connection-pill" id="connection-status" title="Connection status"><span class="connection-dot"></span><span>ONLINE</span></button><button class="icon-button notification-shortcut" data-page-target="notifications" title="Notifications">♧<b id="top-notice-count" class="notification-dot hidden"></b></button><button class="top-avatar avatar" data-avatar data-page-target="profile">VT</button></div>
+      </header>
+
+      <div class="page-container">
+        <section class="page active" id="page-home" data-page="home">
+          <div class="welcome-row"><div><span class="eyebrow">PLAYER DASHBOARD</span><h1>Ready for the <em>arena?</em></h1><p>Welcome back, <b data-user-nickname>Player</b>. Your next match awaits.</p></div><div class="welcome-date" id="welcome-date">PLAYER STATUS <b>ACTIVE</b></div></div>
+          <div class="hero-banner"><div class="hero-grid"></div><div class="hero-copy"><span class="hero-tag"><i></i> THE BATTLEFIELD IS CALLING</span><h2>PLAY SMART.<br><em>RISE HIGHER.</em></h2><p>Join verified events, challenge your skills, and climb the ranks.</p><button class="btn btn-light" data-page-target="tournaments">EXPLORE TOURNAMENTS <span>↗</span></button></div><div class="hero-emblem"><div class="emblem-ring"><span>VT</span></div><small>VER TOUR<br>ESPORTS</small></div><div class="hero-index">01 <span>/</span> 04</div></div>
+          <div id="promo-banners" class="promo-banner-row"></div>
+          <div class="stats-grid">
+            <article class="stat-card"><div class="stat-top"><span>WALLET BALANCE</span><span class="stat-icon cyan">৳</span></div><strong id="home-balance">৳0.00</strong><div class="stat-bottom"><span>Available balance</span><button class="inline-link" data-page-target="wallet">VIEW WALLET ↗</button></div></article>
+            <article class="stat-card"><div class="stat-top"><span>CURRENT RANK</span><span class="stat-icon purple">♛</span></div><strong id="home-rank">Unranked</strong><div class="stat-bottom"><span id="home-points">0 achievement points</span><button class="inline-link" data-page-target="profile">VIEW RANK ↗</button></div></article>
+            <article class="stat-card"><div class="stat-top"><span>VIP MEMBERSHIP</span><span class="stat-icon gold">✦</span></div><strong id="home-vip">PLAYER</strong><div class="stat-bottom"><span id="home-vip-sub">Standard membership</span><span class="muted-label">STATUS</span></div></article>
+            <article class="stat-card"><div class="stat-top"><span>TOURNAMENTS JOINED</span><span class="stat-icon blue">▣</span></div><strong id="home-joined">0</strong><div class="stat-bottom"><span>Confirmed registrations</span><button class="inline-link" data-page-target="tournaments">EXPLORE ↗</button></div></article>
+          </div>
+          <div class="section-heading"><div><span class="eyebrow">LIVE FROM VER TOUR</span><h2>Featured tournament</h2></div><button class="inline-link" data-page-target="tournaments">ALL TOURNAMENTS ↗</button></div>
+          <div id="featured-tournament" class="featured-slot"><div class="skeleton-card"></div></div>
+          <div class="home-lower-grid"><section><div class="section-heading compact"><div><span class="eyebrow">WHAT'S NEW</span><h2>Latest notices</h2></div><button class="inline-link" data-page-target="notifications">VIEW ALL ↗</button></div><div id="home-notices" class="notice-list"><div class="empty-inline">Loading published notices…</div></div></section><section><div class="section-heading compact"><div><span class="eyebrow">PLAYER PROGRESS</span><h2>Rank journey</h2></div><button class="inline-link" data-page-target="profile">DETAILS ↗</button></div><div class="rank-mini-card"><div class="rank-mini-icon" id="mini-rank-icon">♜</div><div class="rank-mini-content"><div class="rank-mini-title"><b id="mini-rank-name">Unranked</b><span id="mini-rank-next">Next: Bronze</span></div><div class="progress-track"><span id="mini-rank-progress" style="width:0%"></span></div><small id="mini-rank-points">0 / 100 points</small></div></div><div class="quick-links"><button data-page-target="wallet"><i>৳</i><span>Wallet & payments</span><b>↗</b></button><button data-open-support><i>✉</i><span>Help & support</span><b>↗</b></button></div></section></div>
+        </section>
+
+        <section class="page" id="page-tournaments" data-page="tournaments">
+          <div class="page-intro"><div><span class="eyebrow">COMPETE FOR GLORY</span><h1>Live <em>tournaments</em></h1><p>Only published and currently available events appear here.</p></div><div class="tournament-filter"><span class="live-indicator"></span> LIVE FEED</div></div>
+          <div class="filter-row"><div class="filter-search"><span>⌕</span><input id="tournament-search" type="search" placeholder="Search tournaments…"></div><select id="tournament-status-filter" aria-label="Tournament status"><option value="all">All events</option><option value="open">Registration open</option><option value="upcoming">Upcoming</option><option value="full">Full</option></select></div>
+          <div id="tournament-list" class="tournament-grid"><div class="skeleton-card"></div><div class="skeleton-card"></div></div>
+        </section>
+
+        <section class="page" id="page-chat" data-page="chat">
+          <div class="page-intro"><div><span class="eyebrow">COMMUNITY ARENA</span><h1>Global <em>chat</em></h1><p>Keep it respectful. Play fair. Support the community.</p></div><div class="online-chip"><span></span> COMMUNITY CHAT</div></div>
+          <div class="chat-layout"><div class="chat-main"><div class="chat-topline"><div><b>VER TOUR COMMUNITY</b><span>Messages update in real time</span></div><span class="secure-label">● MODERATED</span></div><div id="chat-messages" class="chat-messages"><div class="empty-inline">Connecting to global chat…</div></div><form id="chat-form" class="chat-compose"><input id="chat-input" maxlength="500" placeholder="Write a message…" autocomplete="off"><button class="btn btn-primary" type="submit" aria-label="Send message">SEND ↗</button></form><p class="chat-guideline">Do not share passwords, private contact details, or payment credentials.</p></div><aside class="chat-aside"><div class="community-mark">VT</div><span class="eyebrow">COMMUNITY RULES</span><h3>Respect the arena.</h3><p>Keep messages friendly and relevant. Harassment, spam, scams, and personal information are not allowed.</p><div class="rule-line"><span>01</span> Be respectful</div><div class="rule-line"><span>02</span> No scams or spam</div><div class="rule-line"><span>03</span> Keep it game-related</div><button class="inline-link" data-open-support>REPORT A PROBLEM ↗</button></aside></div>
+        </section>
+
+        <section class="page" id="page-notifications" data-page="notifications">
+          <div class="page-intro"><div><span class="eyebrow">PLAYER UPDATES</span><h1>Your <em>notifications</em></h1><p>Tournament updates, payment status, and official notices.</p></div><button id="mark-all-read" class="btn btn-outline">MARK ALL READ</button></div>
+          <div class="section-heading compact"><div><span class="eyebrow">ORGANIZER UPDATES</span><h2>Official notices</h2></div></div>
+          <div id="all-notices" class="notice-list all-notices"><div class="empty-inline">Loading published notices…</div></div>
+          <div class="section-heading compact notification-heading"><div><span class="eyebrow">PLAYER ALERTS</span><h2>Notification history</h2></div></div>
+          <div class="notification-tabs"><button class="active" data-notification-filter="all">All updates</button><button data-notification-filter="unread">Unread</button></div>
+          <div id="notification-list" class="notification-list"><div class="empty-inline">Loading notifications…</div></div>
+        </section>
+
+        <section class="page" id="page-profile" data-page="profile">
+          <div class="page-intro"><div><span class="eyebrow">PLAYER IDENTITY</span><h1>My <em>profile</em></h1><p>Your player information, achievements, and account settings.</p></div><button class="btn btn-outline" id="edit-profile-btn">EDIT PROFILE</button></div>
+          <div class="profile-layout"><section class="profile-card"><div class="profile-cover"><span>VER TOUR PLAYER</span><div class="cover-grid"></div></div><div class="profile-main"><div class="profile-avatar avatar-xl" data-avatar>VT</div><div class="profile-name-row"><div><h2 data-user-nickname>Player</h2><p id="profile-fullname">Full name unavailable</p></div><span id="profile-vip-badge" class="vip-badge">PLAYER</span></div><div class="profile-id-grid"><div><span>FREE FIRE UID</span><b id="profile-ffuid">—</b></div><div><span>FIREBASE UID</span><b id="profile-firebase-uid">—</b></div><div><span>EMAIL ADDRESS</span><b id="profile-email">—</b></div><div><span>ACCOUNT CREATED</span><b id="profile-created">—</b></div><div><span>WALLET BALANCE</span><b id="profile-balance">৳0.00</b></div></div><div class="profile-actions"><button class="btn btn-outline" id="change-photo-btn">CHANGE PHOTO</button><input id="profile-photo-input" type="file" accept="image/*" hidden><button class="btn btn-danger-outline" id="logout-btn">LOG OUT</button></div></div></section><section class="profile-side"><div class="profile-rank-card"><div class="rank-large-icon" id="profile-rank-icon">♜</div><span class="eyebrow">CURRENT RANK</span><h2 id="profile-rank">Unranked</h2><div class="rank-points-row"><b id="profile-points">0</b><span>ACHIEVEMENT POINTS</span></div><div class="progress-track"><span id="profile-rank-progress" style="width:0%"></span></div><p id="profile-rank-next">Earn points through verified tournament achievements.</p></div><div class="profile-vip-card"><span class="eyebrow">MEMBERSHIP STATUS</span><h3 id="profile-vip">Standard Player</h3><p id="profile-vip-description">VIP status is awarded through legitimate achievements and approved membership rewards.</p><div class="progress-track"><span id="profile-vip-progress" style="width:0%"></span></div><small id="profile-vip-progress-label" class="vip-progress-label">Membership progress is managed by verified achievements.</small></div><div class="settings-card"><span class="eyebrow">ACCOUNT & HELP</span><button data-page-target="wallet"><span>Wallet & transaction history</span><b>↗</b></button><button data-open-support><span>Help center & support chat</span><b>↗</b></button><button id="enable-notifications"><span>Enable push notifications</span><b>↗</b></button><button id="edit-profile-shortcut"><span>Edit account profile</span><b>↗</b></button></div></section></div>
+          <div class="section-heading"><div><span class="eyebrow">MATCH RECORD</span><h2>Tournament history</h2></div></div><div id="profile-history" class="history-list"><div class="empty-inline">Loading your match history…</div></div>
+          <div class="section-heading"><div><span class="eyebrow">VERIFIED ACHIEVEMENTS</span><h2>Rank history</h2></div></div><div id="rank-history-list" class="history-list"><div class="empty-inline">Loading rank history…</div></div>
+        </section>
+
+        <section class="page" id="page-wallet" data-page="wallet">
+          <div class="page-intro"><div><span class="eyebrow">PLAYER FUNDS</span><h1>My <em>wallet</em></h1><p>Payment requests are pending until independently verified.</p></div><button class="btn btn-primary" id="add-money-btn">＋ ADD MONEY</button></div>
+          <div class="wallet-summary"><div><span>AVAILABLE BALANCE</span><strong id="wallet-balance">৳0.00</strong><small>Updates only after trusted verification.</small></div><div class="wallet-mark">৳</div></div>
+          <div class="wallet-info-grid"><article class="info-card"><span class="eyebrow">PAYMENT SAFETY</span><h3>Never share your PIN or OTP.</h3><p>VER TOUR will never ask for your bKash/Nagad PIN or one-time password. Verify payment details in-app before sending a request.</p></article><article class="info-card"><span class="eyebrow">PAYMENT METHODS</span><div id="payment-method-status" class="payment-method-status">Loading admin-published payment instructions…</div></article></div>
+          <div class="section-heading"><div><span class="eyebrow">WALLET ACTIVITY</span><h2>Transaction history</h2></div></div><div id="transaction-list" class="transaction-list"><div class="empty-inline">Loading transactions…</div></div>
+        </section>
+
+        <section class="page" id="page-support" data-page="support">
+          <div class="page-intro"><div><span class="eyebrow">WE'RE HERE TO HELP</span><h1>Help <em>center</em></h1><p>Send a support message and view replies from the VER TOUR team.</p></div></div>
+          <div class="support-layout"><div class="support-compose-card"><span class="eyebrow">NEW SUPPORT REQUEST</span><h2>How can we help?</h2><form id="support-form"><label>Issue category<select id="support-category"><option value="account">Account issue</option><option value="payment">Payment issue</option><option value="tournament">Tournament issue</option><option value="other">Other</option></select></label><label>Subject<input id="support-subject" maxlength="100" required placeholder="Briefly describe your issue"></label><label>Message<textarea id="support-message" maxlength="2000" rows="5" required placeholder="Provide the details. Do not include passwords, PINs, or OTPs."></textarea></label><button class="btn btn-primary" type="submit">SEND TO SUPPORT ↗</button></form></div><div class="support-history-card"><span class="eyebrow">YOUR REQUESTS</span><h2>Previous conversations</h2><div id="support-history" class="support-history"><div class="empty-inline">Loading your support messages…</div></div></div></div>
+        </section>
+      </div>
+      <nav class="mobile-nav" aria-label="Main navigation"><button class="active" data-page-target="home"><i>⌂</i><span>Home</span></button><button data-page-target="tournaments"><i>▣</i><span>Events</span></button><button data-page-target="chat"><i>◎</i><span>Chat</span></button><button data-page-target="notifications"><i>♧</i><span>Alerts</span><b id="mobile-notice-count" class="mobile-count hidden">0</b></button><button data-page-target="profile"><i>◉</i><span>Profile</span></button></nav>
+    </div>
+  </div>
+
+  <div id="modal-root" class="modal-root hidden" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal></div>
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button class="modal-close" data-close-modal aria-label="Close">×</button><div id="modal-content"></div></section>
+  </div>
+  <div id="ban-screen" class="ban-screen hidden"><div class="ban-panel"><div class="ban-symbol">!</div><span class="eyebrow">VER TOUR ACCOUNT SECURITY</span><h1>ACCOUNT <em>RESTRICTED</em></h1><p>This account is currently restricted from selected player activities.</p><div class="ban-details"><div><span>REASON</span><b id="ban-reason">Not provided</b></div><div><span>BAN DATE</span><b id="ban-date">—</b></div><div><span>EXPIRY</span><b id="ban-expiry">Until further notice</b></div></div><button class="btn btn-primary btn-full" data-open-support>CONTACT SUPPORT</button><button class="text-button" id="ban-logout">Sign out</button></div></div>
+  <div id="toast-region" class="toast-region" aria-live="polite"></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

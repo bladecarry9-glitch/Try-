@@ -1,0 +1,166 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+    function isAdmin() {
+      return signedIn() && request.auth.token.admin == true;
+    }
+    function activePlayer(uid) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(uid))
+        && get(/databases/$(database)/documents/users/$(uid)).data.isBanned != true
+        && get(/databases/$(database)/documents/users/$(uid)).data.accountStatus != 'banned';
+    }
+
+    match /users/{uid} {
+      allow get: if isOwner(uid) || isAdmin();
+      allow list: if isAdmin();
+      // Player profile creation and changes are handled only by trusted Cloud Functions.
+      allow create, update, delete: if isAdmin();
+
+      match /fcmTokens/{tokenId} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow create, update: if isOwner(uid)
+          && request.resource.data.keys().hasOnly(['token', 'platform', 'updatedAt'])
+          && request.resource.data.token is string
+          && request.resource.data.token.size() > 20;
+        allow delete: if isOwner(uid) || isAdmin();
+      }
+    }
+
+    match /uidRegistry/{key} {
+      allow read, write: if isAdmin();
+    }
+
+    match /nicknameRegistry/{key} {
+      allow read, write: if isAdmin();
+    }
+
+    match /wallets/{uid} {
+      allow get: if isOwner(uid) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly(['availableBalance', 'currency', 'updatedAt'])
+        && request.resource.data.availableBalance == 0
+        && request.resource.data.currency == 'BDT';
+      allow update, delete: if isAdmin();
+    }
+
+    match /tournaments/{tournamentId} {
+      allow get, list: if signedIn()
+        && resource.data.status == 'published';
+      allow write: if isAdmin();
+    }
+
+    match /registrations/{registrationId} {
+      allow get, list: if signedIn() && resource.data.uid == request.auth.uid;
+      allow write: if isAdmin();
+    }
+
+    match /transactions/{transactionId} {
+      allow get, list: if signedIn() && resource.data.uid == request.auth.uid;
+      allow write: if isAdmin();
+    }
+
+    match /globalChat/{messageId} {
+      allow get, list: if signedIn();
+      allow create: if isAdmin() || (activePlayer(request.auth.uid)
+        && request.resource.data.keys().hasOnly([
+          'uid', 'nickname', 'rankName', 'vipLevel', 'text', 'createdAt'
+        ])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.nickname == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.nickname
+        && request.resource.data.rankName == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.rankName
+        && request.resource.data.vipLevel == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.vipLevel
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 500
+        && request.resource.data.createdAt == request.time);
+      allow update: if isAdmin();
+      allow delete: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+    }
+
+    match /chatReports/{reportId} {
+      allow create: if signedIn()
+        && request.resource.data.reporterUid == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          'reporterUid', 'messageId', 'reportedUid', 'reason', 'details', 'status', 'createdAt'
+        ]);
+      allow get, list, update, delete: if isAdmin();
+    }
+
+    match /notifications/{notificationId} {
+      allow get, list: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create, delete: if isAdmin();
+      allow update: if signedIn()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'readAt'])
+        && request.resource.data.read == true;
+    }
+
+    match /notices/{noticeId} {
+      allow get, list: if signedIn()
+        && resource.data.status == 'published';
+      allow write: if isAdmin();
+    }
+
+    match /banners/{bannerId} {
+      allow get, list: if signedIn()
+        && resource.data.status == 'published';
+      allow write: if isAdmin();
+    }
+
+    match /supportMessages/{messageId} {
+      allow get, list: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly([
+          'uid', 'category', 'subject', 'message', 'status', 'createdAt'
+        ])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.subject is string
+        && request.resource.data.subject.size() > 0
+        && request.resource.data.message is string
+        && request.resource.data.message.size() >= 8
+        && request.resource.data.message.size() <= 2000
+        && request.resource.data.status == 'open'
+        && request.resource.data.category in ['account', 'payment', 'tournament', 'other']
+        && (activePlayer(request.auth.uid) || (
+          (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isBanned == true
+            || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.accountStatus == 'banned')
+          && request.resource.data.category == 'account'
+        ));
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /banHistory/{entryId} {
+      allow get, list: if signedIn() && resource.data.uid == request.auth.uid;
+      allow write: if isAdmin();
+    }
+
+    match /rankHistory/{entryId} {
+      allow get, list: if signedIn() && resource.data.uid == request.auth.uid;
+      allow write: if isAdmin();
+    }
+
+    match /publicConfig/{configId} {
+      allow get, list: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /paymentTxnRegistry/{transactionKey} {
+      allow get: if isAdmin();
+      allow list: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
